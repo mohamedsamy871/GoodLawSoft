@@ -3,6 +3,7 @@
 @using Core.Interfaces
 @using GoodLaw.Helpers
 @inject IUnitOfWork<LoginItem> loginItem
+@inject EncryptionService encryptor
 <PageTitle>Index</PageTitle>
 
 <div class="row">
@@ -98,7 +99,7 @@
         _loginItem = loginItem.Entity.GetAll();
         foreach(var item in _loginItem)
         {
-            item.Password = EncryptionManager.Decrypt(item.Password);
+            item.Password = encryptor.Decrypt(item.Password);
         }
     }
 }

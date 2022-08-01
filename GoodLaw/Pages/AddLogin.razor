@@ -2,8 +2,10 @@
 @using Core.Entities
 @using Core.Interfaces
 @using GoodLaw.Helpers
+@using Infrastructure
 @inject IUnitOfWork<LoginItem> loginItem
 @inject NavigationManager NavManager
+@inject EncryptionService encryptor
 <PageTitle>Add login</PageTitle>
  <EditForm Model="@_loginItem" OnValidSubmit="@AddLoginItem">
      <DataAnnotationsValidator/>
@@ -31,7 +33,7 @@
     LoginItem _loginItem = new LoginItem();
     public void AddLoginItem()
     {
-        var encryptedPassword = EncryptionManager.Encrypt(_loginItem.Password);
+        var encryptedPassword =encryptor.Encrypt(_loginItem.Password);
         _loginItem.Password = encryptedPassword;
         loginItem.Entity.Add(_loginItem);
         loginItem.Save();

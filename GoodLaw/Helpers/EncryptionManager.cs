@@ -3,10 +3,10 @@ using System.Text;
 
 namespace GoodLaw.Helpers
 {
-    public class EncryptionManager
+    public  class EncryptionManager
     {
         private readonly static string key = "EngineerMohamedSamy871ASPNetLove";
-        public static string Encrypt(string pass)
+        public string Encrypt(string pass)
         {
             byte[] iv=new byte[16];
             byte[] array;
@@ -29,7 +29,7 @@ namespace GoodLaw.Helpers
             }
             return Convert.ToBase64String(array);
         }
-        public static string Decrypt(string pass)
+        public string Decrypt(string pass)
         {
             byte[] iv = new byte[16];
             byte[] buffer = Convert.FromBase64String(pass);
