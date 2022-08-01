@@ -1,0 +1,40 @@
+﻿@page "/Addlogin"
+@using Core.Entities
+@using Core.Interfaces
+@using GoodLaw.Helpers
+@inject IUnitOfWork<LoginItem> loginItem
+@inject NavigationManager NavManager
+<PageTitle>Add login</PageTitle>
+ <EditForm Model="@_loginItem" OnValidSubmit="@AddLoginItem">
+     <DataAnnotationsValidator/>
+     <ValidationSummary/>
+    <div class="mt-5 mb-4">
+        <label>Name</label>
+        <InputText class="form-control" @bind-Value="_loginItem.Name"/>
+    </div>
+    <div class="mb-4">
+        <label class="control-label">User Name</label>
+        <InputText class="form-control" @bind-Value="_loginItem.UserName"/>
+    </div>
+    <div class="mb-4">
+        <label class="control-label">Password</label>
+        <InputText type="password" class="form-control" @bind-Value="_loginItem.Password"/>
+    </div>
+    <div class="mb-4">
+        <label class="control-label">Remarks</label>
+        <InputText class="form-control" @bind-Value="_loginItem.Remarks"/>
+    </div>
+    <input type="submit" class="btn btn-primary" value="Add"/>
+    <a href="/" class="btn btn-secondary">Cancel</a>
+</EditForm>
+@code {
+    LoginItem _loginItem = new LoginItem();
+    public void AddLoginItem()
+    {
+        var encryptedPassword = EncryptionManager.Encrypt(_loginItem.Password);
+        _loginItem.Password = encryptedPassword;
+        loginItem.Entity.Add(_loginItem);
+        loginItem.Save();
+        NavManager.NavigateTo("/");
+    }
+}
