@@ -1,0 +1,104 @@
+﻿@page "/"
+@using Core.Entities
+@using Core.Interfaces
+@using GoodLaw.Helpers
+@inject IUnitOfWork<LoginItem> loginItem
+<PageTitle>Index</PageTitle>
+
+<div class="row">
+    <div class="col-12">
+        <a class="btn btn-primary mt-3 mb-4" asp-action="Create" asp-controller="Passwords">
+            Add Password
+        </a>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="table-container">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Password For</th>
+                        <th scope="col">User Name</th>
+                        <th scope="col">Remarks</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in _loginItem)
+                    {
+                        <tr>
+                            <td id="test">@item.Name</td>
+                            <td class="pass">
+                                @item.UserName
+                                <button type="button" class="ms-3 btn btn-warning" data-bs-toggle="modal" data-bs-target="#show-@item.Id">
+                                        <i class="fa-solid fa-eye"></i>
+                                </button>
+                                <!-- Modal -->
+                                <div class="modal fade" id="show-@item.Id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Password</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                @item.Password
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>@item.Remarks</td>
+                            <td>
+                                <div class="actions-container">
+                                    <!-- Button trigger modal -->
+                                    <button type="button" class="btn btn-danger me-2" data-bs-toggle="modal" data-bs-target="#delete-@item.Id">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                    <a class="btn btn-success" asp-action="Edit" asp-route-id="@item.Id">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </a>
+                                </div>
+                                <!-- Modal -->
+                                <div class="modal fade" id="delete-@item.Id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Are You Sure We Want to Delete @item.Name
+                                        </div>
+                                        <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <a type="button" asp-controller="Passwords" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-primary">Delete</a>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@code{
+    private IEnumerable<LoginItem>? _loginItem;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _loginItem = loginItem.Entity.GetAll();
+        foreach(var item in _loginItem)
+        {
+            item.Password = EncryptionManager.Decrypt(item.Password);
+        }
+    }
+}
